@@ -36,8 +36,14 @@ export function AtAGlance({ data, today, onSelect }: Props) {
               <div style={{ width: `${status.progress * 100}%` }} />
             </div>
             <p className="glance-meta">
-              {status.term.classesEnd && <>Classes end {formatShort(status.term.classesEnd)} · </>}
-              Term ends {formatShort(status.term.end)}
+              {status.term.classesEnd ? (
+                <>
+                  Classes end {formatShort(status.term.classesEnd)}
+                  <span className="glance-secondary"> · Term ends {formatShort(status.term.end)}</span>
+                </>
+              ) : (
+                <>Term ends {formatShort(status.term.end)}</>
+              )}
             </p>
           </>
         ) : status.kind === "between-terms" ? (
@@ -45,7 +51,8 @@ export function AtAGlance({ data, today, onSelect }: Props) {
             <p className="glance-label">Next semester</p>
             <p className="glance-title">{status.next.name}</p>
             <p className="glance-meta">
-              Classes begin {formatShort(status.next.start)} · in {status.daysUntil} days
+              <span className="glance-secondary">Classes begin {formatShort(status.next.start)} · </span>
+              <strong>in {status.daysUntil} days</strong>
             </p>
           </>
         ) : (
@@ -83,7 +90,8 @@ function EventCard({
       <span className="glance-label">{label}</span>
       <span className="glance-title">{event.title}</span>
       <span className="glance-meta">
-        {formatRange(event.start, event.end, true)} · <strong>{relativeDays(event, today)}</strong>
+        <span className="glance-secondary">{formatRange(event.start, event.end, true)} · </span>
+        <strong>{relativeDays(event, today)}</strong>
       </span>
     </button>
   );

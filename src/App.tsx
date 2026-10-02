@@ -78,10 +78,18 @@ export function App() {
         Skip to calendar
       </a>
       <div className="notice" role="note">
-        <strong>Unofficial.</strong> Not affiliated with Loyola University Chicago.{" "}
-        <a href={data.source.officialUrl} target="_blank" rel="noopener">
-          Check important dates on Loyola's official calendar
-        </a>
+        <span className="notice-long">
+          <strong>Unofficial.</strong> Not affiliated with Loyola University Chicago.{" "}
+          <a href={data.source.officialUrl} target="_blank" rel="noopener">
+            Check important dates on Loyola's official calendar
+          </a>
+        </span>
+        <span className="notice-short">
+          <strong>Unofficial</strong> · not affiliated with Loyola ·{" "}
+          <a href={data.source.officialUrl} target="_blank" rel="noopener">
+            Official calendar ↗
+          </a>
+        </span>
       </div>
 
       <header className="site-header">

@@ -94,6 +94,7 @@ button { font: inherit; color: inherit; }
   padding: 8px 16px;
 }
 .notice strong { color: var(--text); }
+.notice-short { display: none; }
 
 .site-header { padding: 28px 0 8px; }
 .site-header h1 { font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.1rem); letter-spacing: -0.02em; line-height: 1.15; }
@@ -336,6 +337,33 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; padding-
 
 @media (max-width: 600px) {
   .wrap { padding: 0 12px; }
+
+  /* Compact header: one-line notice, no tagline. */
+  .notice { padding: 6px 8px; font-size: 0.8125rem; }
+  .notice-short a { white-space: nowrap; }
+  .notice-long { display: none; }
+  .notice-short { display: inline; }
+  .site-header { padding: 14px 0 0; }
+  .tagline { display: none; }
+  main { gap: 14px; padding-top: 14px; }
+
+  /* At-a-glance cards become one-line rows. */
+  .glance { gap: 6px; }
+  .glance-card {
+    flex-direction: row; flex-wrap: wrap; align-items: baseline; column-gap: 8px;
+    padding: 8px 12px 8px 14px;
+    border-radius: 10px;
+  }
+  .glance-label { flex: none; font-size: 0.6875rem; }
+  .glance-title {
+    flex: 1; min-width: 0;
+    font-size: 0.9375rem;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .glance-meta { flex: none; font-size: 0.8125rem; }
+  .glance-secondary { display: none; }
+  .progress { flex-basis: 100%; order: 1; height: 4px; margin: 6px 0 2px; }
+
   /* On phones the grid is a visual overview; the agenda below is the list. */
   .week { grid-template-rows: 26px repeat(var(--lanes), 7px) minmax(6px, 1fr); min-height: 64px; row-gap: 2px; }
   .day { padding: 2px; text-align: center; }
