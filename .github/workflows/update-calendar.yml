@@ -1,0 +1,87 @@
+name: Check Loyola calendar for changes
+
+# Weekly: fetch Loyola's pages, parse + validate, and open a pull request if
+# any dates changed. Nothing reaches subscribers until a human merges the PR.
+# If the pages can't be parsed safely, the run fails and an issue is opened.
+
+on:
+  schedule:
+    - cron: "17 14 * * 1" # Mondays, ~9am Chicago
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: update-calendar
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      - name: Fetch, parse and validate Loyola's calendar
+        run: npm run update-data -- --summary "$RUNNER_TEMP/changes.md"
+
+      - name: Test and build with the new data
+        run: |
+          npm test
+          npm run build
+
+      - name: Open or update a pull request
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- data/; then
+            echo "No changes to Loyola's calendar."
+            exit 0
+          fi
+          branch=automated/calendar-update
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$branch"
+          git add data/
+          git commit -m "Update academic calendar from Loyola's website"
+          git push --force origin "$branch"
+
+          {
+            echo "Automated update from Loyola's official academic calendar pages."
+            echo
+            echo "**Before merging:** spot-check the changes below against"
+            echo "https://www.luc.edu/academics/schedules/fall/academic_calendar.shtml."
+            echo "Merging publishes them to everyone subscribed to the calendar feeds."
+            echo
+            cat "$RUNNER_TEMP/changes.md"
+          } > "$RUNNER_TEMP/body.md"
+
+          if gh pr view "$branch" --json state -q .state 2>/dev/null | grep -q OPEN; then
+            gh pr edit "$branch" --body-file "$RUNNER_TEMP/body.md"
+          else
+            gh pr create --head "$branch" --title "Academic calendar changes from Loyola" --body-file "$RUNNER_TEMP/body.md"
+          fi
+
+      - name: Open an issue if the update failed
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="Calendar update failed: Loyola's page may have changed"
+          existing=$(gh issue list --state open --search "in:title \"$title\"" --json number -q '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "Failed again: $RUN_URL"
+          else
+            gh issue create --title "$title" --body "The scheduled update could not safely parse or validate Loyola's calendar, so nothing was changed. See the log for the exact problems: $RUN_URL
+
+          See \"When the update fails\" in the README."
+          fi

@@ -1,0 +1,26 @@
+name: Incorrect or missing date
+description: A date here doesn't match Loyola's official academic calendar
+labels: [data]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks! Loyola's official calendar is authoritative. Please compare against it:
+        https://www.luc.edu/academics/schedules/fall/academic_calendar.shtml
+  - type: input
+    id: event
+    attributes:
+      label: Which event?
+      placeholder: "Fall 2026: Thanksgiving Break"
+    validations:
+      required: true
+  - type: textarea
+    id: difference
+    attributes:
+      label: What's shown here vs. what Loyola publishes
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Link to the Loyola page showing the correct date
