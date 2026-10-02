@@ -38,6 +38,9 @@ export const FEEDS: Feed[] = [
   },
 ];
 
+/** Maroon, close to Loyola's school color: a suggestion for subscribers' calendar apps. */
+const CALENDAR_COLOR = "#8A1538";
+
 export function renderFeed(feed: Feed, data: CalendarData, siteUrl?: string): string {
   return buildIcs(data.events.filter(feed.include), {
     name: feed.calendarName,
@@ -47,6 +50,7 @@ export function renderFeed(feed: Feed, data: CalendarData, siteUrl?: string): st
       data.source.officialUrl,
     uidDomain: feed.uidDomain,
     sourceUrl: data.source.officialUrl,
+    color: CALENDAR_COLOR,
     ...(siteUrl ? { siteUrl } : {}),
   });
 }

@@ -132,6 +132,11 @@ describe("iCalendar formatting", () => {
     expect(e!.DESCRIPTION).toContain("https://example.edu/cal");
   });
 
+  it("suggests a calendar color only when one is given", () => {
+    expect(buildIcs([event()], OPTIONS)).not.toContain("X-APPLE-CALENDAR-COLOR");
+    expect(buildIcs([event()], { ...OPTIONS, color: "#8A1538" })).toContain("\r\nX-APPLE-CALENDAR-COLOR:#8A1538\r\n");
+  });
+
   it("is deterministic", () => {
     const d = data as CalendarData;
     expect(renderFeed(FEEDS[0]!, d)).toBe(renderFeed(FEEDS[0]!, d));

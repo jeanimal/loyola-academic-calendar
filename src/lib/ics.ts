@@ -25,6 +25,8 @@ export type IcsCalendarOptions = {
   sourceUrl: string;
   /** Public page for this viewer, if known. */
   siteUrl?: string;
+  /** Suggested calendar color ("#RRGGBB"); Apple Calendar applies it when subscribing. */
+  color?: string;
 };
 
 const CRLF = "\r\n";
@@ -104,6 +106,7 @@ export function buildIcs(events: AcademicEvent[], options: IcsCalendarOptions): 
     "REFRESH-INTERVAL;VALUE=DURATION:PT12H",
     "X-PUBLISHED-TTL:PT12H",
   ];
+  if (options.color) lines.push(`X-APPLE-CALENDAR-COLOR:${options.color}`);
 
   const sorted = [...events].sort((a, b) => a.start.localeCompare(b.start) || a.id.localeCompare(b.id));
   for (const event of sorted) {
