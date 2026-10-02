@@ -1,7 +1,7 @@
 {
   "name": "loyola-academic-calendar",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Unofficial Loyola University Chicago academic calendar viewer and subscribable calendar feed",
   "type": "module",
   "scripts": {
